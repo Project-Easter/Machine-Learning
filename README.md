@@ -5,4 +5,7 @@ At first use four basic inputs for book
 2.Cover image url
 3.Genres
 4.Upvotes
+5.ISBN
+6.Author
+7.Date of release
 
