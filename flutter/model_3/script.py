@@ -13,6 +13,7 @@ class recommendation:
         """
         self.df = pd.read_csv('model_2_data_updated.csv')
         self.preprocessing()
+        self.loading_model()
 
     def preprocessing(self):
         """
