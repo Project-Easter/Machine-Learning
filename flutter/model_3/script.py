@@ -11,7 +11,7 @@ class recommendation:
         """
         Constructor for initialising class with dataframe
         """
-        self.df = pd.read_csv('model_2_data_updated.csv')
+        self.df = pd.read_csv('flutter\model_3\model_2_data_updated.csv', encoding='latin-1')
         self.preprocessing()
         self.loading_model()
 
