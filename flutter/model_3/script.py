@@ -87,6 +87,14 @@ class recommendation:
     def matching(self,fav_book):
         """
         This function matches search query with the books available in our database and returns the titles and isbns
+
+        Parameters
+        -----------
+        fav_book : Keyword used for searching book
+
+        Return
+        -----------
+        match[0][1]: Index of most matched book (To be changed in future)
         """
         match = [] # list storing the names of matched books 
         # getting the matches 
