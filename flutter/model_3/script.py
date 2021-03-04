@@ -2,6 +2,7 @@ import pandas as pd
 import pickle as pkl 
 from scipy.sparse import csr_matrix
 from sklearn.neighbors import NearestNeighbors
+from fuzzywuzzy import fuzz 
 
 class recommendation:
     """
@@ -28,9 +29,9 @@ class recommendation:
         mat = self.df.pivot(index=' isbn', columns='user_id', values=' no_of_exchanges').fillna(0)
         self.sparse_mat = csr_matrix(mat.values)
         # making a crosstab of isbn and title from df
-        book_map = self.df[[' isbn',' title']]
-        self.hash_map = { book : i for i,book in enumerate(list(book_map.set_index(' isbn').loc[mat.index][' title']))}
-        self.book_dict = dict(zip(book_map[' isbn'], book_map[' title']))
+        self.book_map = self.df[[' isbn',' title']]
+        self.hash_map = { book : i for i,book in enumerate(list(self.book_map.set_index(' isbn').loc[mat.index][' title']))}
+        self.book_dict = dict(zip(self.book_map[' isbn'], self.book_map[' title']))
 
     def loading_model(self):
         """
@@ -83,5 +84,24 @@ class recommendation:
                     isbns.append(isb)
         return isbns
        
+    def matching(self,fav_book):
+        """
+        This function matches search query with the books available in our database and returns the titles and isbns
+        """
+        match = [] # list storing the names of matched books 
+        # getting the matches 
+        for title, isbn in self.hash_map.items():
+            ratio = fuzz.ratio(title.lower(), fav_book.lower())
+            if ratio >= 60:
+                match.append((title, isbn, ratio))
+        # sorting the titles in descending order
+        match = sorted(match, key = lambda x : x[2])[::-1]
+        if not match:
+            print("No match found")
+            return None 
+        else:
+            print("Found possible matches in our database: {}".format([x[0] for x in match]))
+            return match[0][1] 
+                 
 
 
