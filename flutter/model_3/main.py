@@ -8,21 +8,21 @@ def hello_world():
 
 @app.route('/recommend_isbn/<int:isbn>')
 def recommend_with_isbn(isbn):
-    re = recommendation()
-    recommend_list = re.get_recommedations(isbn)
+    re = recommendation() # initialising class object
+    recommend_list = re.get_recommedations(isbn) # getting list of isbns of recommended books
     return jsonify(recommend_list)
 
 @app.route('/book_title/<string:title>')
 def get_title(title):
-    re = recommendation()
-    matches = re.matching(title)
+    re = recommendation() # initialising class object
+    matches = re.matching(title) # getting list of matching books
     match_list = {}
     i = int(0)
     for match in matches:
-        book_number = "Book_" + str(i+1)
-        title = match[0]
-        isbn = match[1]
-        match_list[book_number] = {'Title' : title, 'ISBN' : isbn}
+        book_number = "Book_" + str(i+1) # initialising book_number
+        title = match[0] # getting title of matching book 
+        isbn = match[1] # getting isbn of matching isbn
+        match_list[book_number] = {'Title' : title, 'ISBN' : isbn} # making nested dictionary
         i += 1 
     
     return jsonify(match_list)

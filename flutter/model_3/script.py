@@ -94,7 +94,8 @@ class recommendation:
 
         Return
         -----------
-        match[0][1]: Index of most matched book (To be changed in future)
+        match : List of matching books with title and isbn
+        
         """
         match = [] # list storing the names of matched books 
         # getting the matches 
