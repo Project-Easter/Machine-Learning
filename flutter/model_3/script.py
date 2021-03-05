@@ -100,7 +100,7 @@ class recommendation:
         # getting the matches 
         for isbn, title in self.book_dict.items():
             ratio = fuzz.ratio(title.lower(), fav_book.lower())
-            if ratio >= 60:
+            if ratio >= 50:
                 match.append((title, isbn, ratio))
         # sorting the titles in descending order
         match = sorted(match, key = lambda x : x[2])[::-1]
