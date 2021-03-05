@@ -98,7 +98,7 @@ class recommendation:
         """
         match = [] # list storing the names of matched books 
         # getting the matches 
-        for title, isbn in self.hash_map.items():
+        for isbn, title in self.book_dict.items():
             ratio = fuzz.ratio(title.lower(), fav_book.lower())
             if ratio >= 60:
                 match.append((title, isbn, ratio))
@@ -109,7 +109,7 @@ class recommendation:
             return None 
         else:
             print("Found possible matches in our database: {}".format([x[0] for x in match]))
-            return match[0][1] 
+            return match 
                  
 
 
