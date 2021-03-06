@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from script import recommendation
 app = Flask(__name__)
 
@@ -6,14 +6,16 @@ app = Flask(__name__)
 def hello_world():
     return 'Hello, World!'
 
-@app.route('/recommend_isbn/<int:isbn>')
-def recommend_with_isbn(isbn):
+@app.route('/recommend_isbn/', methods = ['GET'])
+def recommend_with_isbn():
+    isbn = int(request.args.get("isbn",None))
     re = recommendation() # initialising class object
     recommend_list = re.get_recommedations(isbn) # getting list of isbns of recommended books
     return jsonify(recommend_list)
 
-@app.route('/book_title/<string:title>')
-def get_title(title):
+@app.route('/book_title/', methods = ['GET'])
+def get_title():
+    title = request.args.get("title", None)
     re = recommendation() # initialising class object
     matches = re.matching(title) # getting list of matching books
     match_list = {}
