@@ -37,7 +37,7 @@ class recommendation:
         """
         Function initialising model which will be used for recommendations
         """
-        self.model = NearestNeighbors(algorithm='brute',metric='cosine')
+        self.model = pkl.load(open('flutter\model_3\model_file.pkl','rb'))
         self.model.fit(self.sparse_mat)
     
     def get_title(self,isbn):
