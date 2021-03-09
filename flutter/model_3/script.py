@@ -12,7 +12,7 @@ class recommendation:
         """
         Constructor for initialising class with dataframe
         """
-        self.df = pd.read_csv('flutter\model_3\model_2_data_updated.csv', encoding='latin-1')
+        self.df = pd.read_csv('model_2_data_updated.csv', encoding='latin-1')
         self.preprocessing()
         self.loading_model()
 
@@ -37,7 +37,7 @@ class recommendation:
         """
         Function initialising model which will be used for recommendations
         """
-        self.model = NearestNeighbors(algorithm='brute',metric='cosine')
+        self.model = pkl.load(open('model_file.pkl','rb'))
         self.model.fit(self.sparse_mat)
     
     def get_title(self,isbn):
