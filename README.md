@@ -6,4 +6,4 @@ There will be in three models to be used for recommendations:
 2. Based on user's reading history( Model 2)
 3. Based on nearby users' readings( Model 3)
 
-The API for model 3 is available on : explr-books.herokuapp.com
+The API for model 3 is available on : https://explr-books.herokuapp.com
