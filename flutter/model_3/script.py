@@ -5,7 +5,7 @@ from sklearn.neighbors import NearestNeighbors
 from fuzzywuzzy import fuzz 
 from urllib.request import urlopen
 import json
-from uuid import uuid4
+import shortuuid
 import random
 
 class recommendation:
@@ -124,38 +124,40 @@ class recommendation:
         decoded_text = text.decode('utf-8')
         obj = json.loads(decoded_text)
 
+        volume_info = obj['items'][0]
+        authors = obj['items'][0]['volumeInfo']['authors']
+        langs = {
+            'en': 'English',
+            'fr': 'French',
+            'es': 'Spanish',
+            'de': 'German',
+            'ru': 'Russian',
+            'hi': 'Hindi'
+        }
+
+        f = open('model_2_data_updated.csv', 'a')
+
+        user_id = shortuuid.uuid()
+        no_of_exchanges = random.randrange(0,10)
+
+        title = volume_info['volumeInfo']['title']
+        author = authors[0]
+        publisher = volume_info['volumeInfo']['publisher']
         try:
-            volume_info = obj['items'][0]
-            authors = obj['items'][0]['volumeInfo']['authors']
-            langs = {
-                'en': 'English',
-                'fr': 'French',
-                'es': 'Spanish',
-                'de': 'German',
-                'ru': 'Russian',
-                'hi': 'Hindi'
-            }
-
-            f = open('flutter\model_3\model_2_data_updated.csv', 'a')
-
-            user_id = uuid4()
-            no_of_exchanges = random.randrange(0,10)
-
-            title = volume_info['volumeInfo']['title']
-            author = authors[0]
-            publisher = volume_info['volumeInfo']['publisher']
-            try:
-                language = langs[volume_info['volumeInfo']['language']]
-            except KeyError:
-                language = ''
-            ratings = round(volume_info['volumeInfo']['averageRating'])
-
-            try:
-                f.write(user_id + ',' + title.replace(',','|') + ',' + author.replace(',','|') + ',' + publisher.replace(',','|') + isbn + ',' + language + ',' + str(no_of_exchanges) + ',' + str(ratings) + '\n')
-            except UnicodeDecodeError:
-                pass
-            f.close()
+            language = langs[volume_info['volumeInfo']['language']]
         except KeyError:
-            return 'Sorry! Couldn\'t process'
+            language = ''
+        try:
+            ratings = volume_info['volumeInfo']['averageRating']
+        except KeyError:
+            ratings = 0
+
+        try:
+            f.write(user_id + ',' + title.replace(',','|') + ',' + author.replace(',','|') + ',' + publisher.replace(',','|') + ',' + str(isbn) + ',' + language + ',' + str(no_of_exchanges) + ',' + str(ratings) + '\n')
+            print('Record Added')
+        except UnicodeDecodeError:
+            pass
+        f.close()
+
 
 
