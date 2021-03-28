@@ -3,6 +3,10 @@ import pickle as pkl
 from scipy.sparse import csr_matrix
 from sklearn.neighbors import NearestNeighbors
 from fuzzywuzzy import fuzz 
+from urllib.request import urlopen
+import json
+from uuid import uuid4
+import random
 
 class recommendation:
     """
@@ -111,6 +115,47 @@ class recommendation:
         else:
             print("Found possible matches in our database: {}".format([x[0] for x in match]))
             return match 
-                 
+
+    def append_missing(self, isbn):
+        self.base_api_link = 'https://www.googleapis.com/books/v1/volumes?q=isbn:'
+        with urlopen(self.base_api_link + str(isbn)) as f:
+            text = f.read()
+
+        decoded_text = text.decode('utf-8')
+        obj = json.loads(decoded_text)
+
+        try:
+            volume_info = obj['items'][0]
+            authors = obj['items'][0]['volumeInfo']['authors']
+            langs = {
+                'en': 'English',
+                'fr': 'French',
+                'es': 'Spanish',
+                'de': 'German',
+                'ru': 'Russian',
+                'hi': 'Hindi'
+            }
+
+            f = open('flutter\model_3\model_2_data_updated.csv', 'a')
+
+            user_id = uuid4()
+            no_of_exchanges = random.randrange(0,10)
+
+            title = volume_info['volumeInfo']['title']
+            author = authors[0]
+            publisher = volume_info['volumeInfo']['publisher']
+            try:
+                language = langs[volume_info['volumeInfo']['language']]
+            except KeyError:
+                language = ''
+            ratings = round(volume_info['volumeInfo']['averageRating'])
+
+            try:
+                f.write(user_id + ',' + title.replace(',','|') + ',' + author.replace(',','|') + ',' + publisher.replace(',','|') + isbn + ',' + language + ',' + str(no_of_exchanges) + ',' + str(ratings) + '\n')
+            except UnicodeDecodeError:
+                pass
+            f.close()
+        except KeyError:
+            return 'Sorry! Couldn\'t process'
 
 
