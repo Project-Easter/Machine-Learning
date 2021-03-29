@@ -117,6 +117,17 @@ class recommendation:
             return match 
 
     def append_missing(self, isbn):
+        """
+        This function automatically appends the records for missing book's isbn.
+
+        Parameters
+        -----------
+        isbn: ISBN of missing book
+
+        Return
+        -----------
+        None, appends the new record to model_2_data_updated.csv
+        """
         self.base_api_link = 'https://www.googleapis.com/books/v1/volumes?q=isbn:'
         with urlopen(self.base_api_link + str(isbn)) as f:
             text = f.read()
