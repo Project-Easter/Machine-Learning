@@ -16,7 +16,7 @@ class recommendation:
         """
         Constructor for initialising class with dataframe
         """
-        self.df = pd.read_csv('model_2_data_updated.csv', encoding='latin-1')
+        self.df = pd.read_csv('model_data_updated.csv', encoding='latin-1', error_bad_lines=False)
         self.preprocessing()
         self.loading_model()
 
@@ -146,7 +146,7 @@ class recommendation:
             'hi': 'Hindi'
         }
 
-        f = open('model_2_data_updated.csv', 'a')
+        f = open('model_data_updated.csv', 'a')
 
         user_id = shortuuid.uuid()
         no_of_exchanges = random.randrange(0,10)
