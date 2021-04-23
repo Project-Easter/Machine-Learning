@@ -1,8 +1,9 @@
 # Machine-Learning
-This code is simply a clone from web and we have to improve it's performance with our custom input.
-At first use four basic inputs for book
-1.Title
-2.Genres
-3.Author
+This repository contains the code for the ML models to be used in the application for recommendation.
 
+There will be in three models to be used for recommendations:
+1. Books for user just after signup.(Model 1)
+2. Based on user's reading history( Model 2)
+3. Based on nearby users' readings( Model 3)
 
+The API for model 3 is available on : https://explr-books.herokuapp.com
