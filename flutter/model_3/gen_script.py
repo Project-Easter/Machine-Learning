@@ -10,7 +10,7 @@ import random
 
 class gen_recommendation:
     """
-    Class containing all necessary methods for making recommendations based on title as well as isbn of a certain book
+    Class containing all necessary methods for making recommendations based on title as well as isbn of a certain book based on its genre
     """
     def __init__(self, genre):
         """
