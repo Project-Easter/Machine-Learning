@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from script import recommendation
+from gen_script import gen_recommendation
 app = Flask(__name__)
 
 @app.route('/')
@@ -14,7 +15,8 @@ def recommend_with_isbn():
         recommend_list = re.get_recommedations(isbn) # getting list of isbns of recommended books
         return jsonify(recommend_list)
     except KeyError:
-        return 'Sorry! Book unavailable in database.'
+        re.append_missing(isbn)
+        return 'Book was missing! added to database!'
 
 @app.route('/book_title/', methods = ['GET'])
 def get_title():
@@ -31,3 +33,16 @@ def get_title():
         i += 1 
     
     return jsonify(match_list)
+
+@app.route('/recommend_with_genre/', methods = ['GET'])
+def recommend_with_genre():
+    isbn = int(request.args.get('isbn', None))
+    genre = request.args.get('genre', None)
+    genre = genre + ' '
+    try:
+        re = gen_recommendation(genre=genre) # initialising class object
+        recommend_list = re.get_recommedations(isbn) # getting list of isbns of recommended books
+        return jsonify(recommend_list)
+    except Exception as e:
+        return str(e)
+

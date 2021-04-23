@@ -8,19 +8,19 @@ import json
 import shortuuid
 import random
 
-class recommendation:
+class gen_recommendation:
     """
-    Class containing all necessary methods for making recommendations based on title as well as isbn of a certain book
+    Class containing all necessary methods for making recommendations based on title as well as isbn of a certain book based on its genre
     """
-    def __init__(self):
+    def __init__(self, genre):
         """
         Constructor for initialising class with dataframe
         """
         self.df = pd.read_csv('model_data_updated.csv', encoding='latin-1', error_bad_lines=False)
-        self.preprocessing()
+        self.preprocessing(genre)
         self.loading_model()
 
-    def preprocessing(self):
+    def preprocessing(self, genre):
         """
         Function for creating all necessary variables for making recommendations
 
@@ -29,6 +29,7 @@ class recommendation:
         hash_map - dictionary mapping book title with pivot matrix index
         """
         self.df.dropna(inplace=True)
+        self.df = self.df[self.df[' genre']==genre]
         # making pivot matrix
         mat = self.df.pivot(index=' isbn', columns='user_id', values=' no_of_exchanges').fillna(0)
         self.sparse_mat = csr_matrix(mat.values)
@@ -43,7 +44,7 @@ class recommendation:
         """
         self.model = pkl.load(open('model_file.pkl','rb'))
         self.model.fit(self.sparse_mat)
-    
+
     def get_title(self,isbn):
         """
         Function to return title of recommended books using isbn
@@ -87,88 +88,3 @@ class recommendation:
                 if title == book_name:
                     isbns.append(isb)
         return isbns
-       
-    def matching(self,fav_book):
-        """
-        This function matches search query with the books available in our database and returns the titles and isbns
-
-        Parameters
-        -----------
-        fav_book : Keyword used for searching book
-
-        Return
-        -----------
-        match : List of matching books with title and isbn
-        
-        """
-        match = [] # list storing the names of matched books 
-        # getting the matches 
-        for isbn, title in self.book_dict.items():
-            ratio = fuzz.ratio(title.lower(), fav_book.lower())
-            if ratio >= 50:
-                match.append((title, isbn, ratio))
-        # sorting the titles in descending order
-        match = sorted(match, key = lambda x : x[2])[::-1]
-        if not match:
-            print("No match found")
-            return None 
-        else:
-            print("Found possible matches in our database: {}".format([x[0] for x in match]))
-            return match 
-
-    def append_missing(self, isbn):
-        """
-        This function automatically appends the records for missing book's isbn.
-
-        Parameters
-        -----------
-        isbn: ISBN of missing book
-
-        Return
-        -----------
-        None, appends the new record to model_2_data_updated.csv
-        """
-        self.base_api_link = 'https://www.googleapis.com/books/v1/volumes?q=isbn:'
-        with urlopen(self.base_api_link + str(isbn)) as f:
-            text = f.read()
-
-        decoded_text = text.decode('utf-8')
-        obj = json.loads(decoded_text)
-
-        volume_info = obj['items'][0]
-        authors = obj['items'][0]['volumeInfo']['authors']
-        langs = {
-            'en': 'English',
-            'fr': 'French',
-            'es': 'Spanish',
-            'de': 'German',
-            'ru': 'Russian',
-            'hi': 'Hindi'
-        }
-
-        f = open('model_data_updated.csv', 'a')
-
-        user_id = shortuuid.uuid()
-        no_of_exchanges = random.randrange(0,10)
-
-        title = volume_info['volumeInfo']['title']
-        author = authors[0]
-        publisher = volume_info['volumeInfo']['publisher']
-        try:
-            language = langs[volume_info['volumeInfo']['language']]
-        except KeyError:
-            language = ''
-        try:
-            ratings = volume_info['volumeInfo']['averageRating']
-        except KeyError:
-            ratings = 0
-
-        try:
-            f.write(user_id + ',' + title.replace(',','|') + ',' + author.replace(',','|') + ',' + publisher.replace(',','|') + ',' + str(isbn) + ',' + language + ',' + str(no_of_exchanges) + ',' + str(ratings) + '\n')
-            print('Record Added')
-        except UnicodeDecodeError:
-            pass
-        f.close()
-
-
-
