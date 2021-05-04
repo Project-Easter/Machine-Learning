@@ -46,3 +46,16 @@ def recommend_with_genre():
     except Exception as e:
         return str(e)
 
+@app.route('/matching_book/', methods = ['GET'])
+def get_book_details():
+    isbn = int(request.args.get('isbn', None))
+    title = request.args.get('title', None)
+    try:
+        re = recommendation()
+        result = re.matching_book(title, isbn)
+        return jsonify(result)
+    except Exception as e:
+        return str(e)
+
+# if __name__ == "__main__":
+#     app.run(debug=True)
