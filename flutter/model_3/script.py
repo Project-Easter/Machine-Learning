@@ -155,6 +155,10 @@ class recommendation:
         author = authors[0]
         publisher = volume_info['volumeInfo']['publisher']
         try:
+            genre = volume_info['volumeInfo']['mainCategory']
+        except KeyError:
+            genre = ''
+        try:
             language = langs[volume_info['volumeInfo']['language']]
         except KeyError:
             language = ''
@@ -164,13 +168,25 @@ class recommendation:
             ratings = 0
 
         try:
-            f.write(user_id + ',' + title.replace(',','|') + ',' + author.replace(',','|') + ',' + publisher.replace(',','|') + ',' + str(isbn) + ',' + language + ',' + str(no_of_exchanges) + ',' + str(ratings) + '\n')
+            f.write(user_id + ',' + title.replace(',','|') + ',' + author.replace(',','|') + ',' + publisher.replace(',','|') + ',' + str(isbn) + ',' + language + ',' + str(no_of_exchanges) + ',' + str(ratings) + ',' + genre +  '\n')
             print('Record Added')
         except UnicodeDecodeError:
             pass
         f.close()
 
-    def matching_book(self, book_name, book_isbn):
+    def matching_book(self, book_isbn, book_name=None):
+        """
+        This function returns the details of the book whose name or isbn is provided.
+
+        Parameters
+        ------------
+        book_isbn : isbn of the book 
+        book_name : title of the book
+
+        Return 
+        ------------
+        self.book_details(book_isbn) : dictionary having title, isbn, author and genre of the book
+        """
         if book_name is None:
             return self.book_details(book_isbn)
             
@@ -184,14 +200,45 @@ class recommendation:
         
         
     def book_details(self, isbn):
+        """
+        This function return the details of a book whose isbn in passed
+
+        Parameters
+        -----------
+        isbn : isbn of the book
+
+        Return 
+        ----------
+        details : dictionary of the book with its title, author, isbn and genre
+        """
         details = {}
         book_info = self.df[self.df[' isbn'] == isbn]
+        print(book_info)
         details['Name'] = book_info.iloc[0][' title']
         details['ISBN'] = isbn
         details['Author'] = book_info.iloc[0][' author']
         details['Genre'] = book_info.iloc[0][' genre']
-        print(details)
-
         return details
+    
+    def random_books(self, genre):
+        """
+        This function returns 5 random books based on the genre passed
+
+        Parameters
+        -----------
+        genre : genre whose books are required
+
+        Return 
+        ----------
+        books : dictionary of 5 random books with their details
+        """
+        genre = genre + ' '
+        books_genre = self.df[self.df[' genre']==genre].sample(5)
+        print(len(books_genre))
+        books = {}
+        for i in range(5):
+            books[i+1] = self.book_details(books_genre.iloc[i][' isbn'])
+        
+        return books
 
 
