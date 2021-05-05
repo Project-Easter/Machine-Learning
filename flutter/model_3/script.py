@@ -174,7 +174,7 @@ class recommendation:
             pass
         f.close()
 
-    def matching_book(self, book_isbn, book_name=None):
+    def matching_book(self, book_isbn, book_name):
         """
         This function returns the details of the book whose name or isbn is provided.
 
@@ -187,15 +187,6 @@ class recommendation:
         ------------
         self.book_details(book_isbn) : dictionary having title, isbn, author and genre of the book
         """
-        if book_name is None:
-            return self.book_details(book_isbn)
-            
-        books = self.matching(book_name)
-        for book in books:
-            if book == book_name:
-                isbn = self.df[' isbn'][self.df[' title']==book]
-                return self.book_details(isbn)
-        
         return self.book_details(book_isbn)
         
         
@@ -213,7 +204,6 @@ class recommendation:
         """
         details = {}
         book_info = self.df[self.df[' isbn'] == isbn]
-        print(book_info)
         details['Name'] = book_info.iloc[0][' title']
         details['ISBN'] = isbn
         details['Author'] = book_info.iloc[0][' author']

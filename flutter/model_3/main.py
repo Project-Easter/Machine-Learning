@@ -55,8 +55,7 @@ def get_book_details():
         result = re.matching_book(isbn, title)
         return jsonify(result)
     except Exception as e:
-        re.append_missing(isbn)
-        return "Book was missing from the database, now added!"
+        return "Book was missing from the database"
 
 @app.route('/random_books/', methods = ['GET'])
 def get_random_books():
