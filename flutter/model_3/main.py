@@ -57,5 +57,15 @@ def get_book_details():
     except Exception as e:
         return str(e)
 
+@app.route('/random_books/', methods = ['GET'])
+def get_random_books():
+    genre = request.args.get('genre', None)
+    try:
+        re = recommendation()
+        result = re.random_books(genre=genre)
+        return jsonify(result)
+    except Exception as e:
+        return str(e)
+
 # if __name__ == "__main__":
 #     app.run(debug=True)
