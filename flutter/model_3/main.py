@@ -50,22 +50,23 @@ def recommend_with_genre():
 def get_book_details():
     isbn = int(request.args.get('isbn', None))
     title = request.args.get('title', None)
+    re = recommendation()
     try:
-        re = recommendation()
-        result = re.matching_book(title, isbn)
+        result = re.matching_book(isbn, title)
         return jsonify(result)
     except Exception as e:
-        return str(e)
+        re.append_missing(isbn)
+        return "Book was missing from the database, now added!"
 
 @app.route('/random_books/', methods = ['GET'])
 def get_random_books():
     genre = request.args.get('genre', None)
+    re = recommendation()
     try:
-        re = recommendation()
         result = re.random_books(genre=genre)
         return jsonify(result)
     except Exception as e:
         return str(e)
 
-# if __name__ == "__main__":
-#     app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True)

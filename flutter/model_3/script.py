@@ -155,6 +155,10 @@ class recommendation:
         author = authors[0]
         publisher = volume_info['volumeInfo']['publisher']
         try:
+            genre = volume_info['volumeInfo']['mainCategory']
+        except KeyError:
+            genre = ''
+        try:
             language = langs[volume_info['volumeInfo']['language']]
         except KeyError:
             language = ''
@@ -164,7 +168,7 @@ class recommendation:
             ratings = 0
 
         try:
-            f.write(user_id + ',' + title.replace(',','|') + ',' + author.replace(',','|') + ',' + publisher.replace(',','|') + ',' + str(isbn) + ',' + language + ',' + str(no_of_exchanges) + ',' + str(ratings) + '\n')
+            f.write(user_id + ',' + title.replace(',','|') + ',' + author.replace(',','|') + ',' + publisher.replace(',','|') + ',' + str(isbn) + ',' + language + ',' + str(no_of_exchanges) + ',' + str(ratings) + ',' + genre +  '\n')
             print('Record Added')
         except UnicodeDecodeError:
             pass
@@ -209,6 +213,7 @@ class recommendation:
         """
         details = {}
         book_info = self.df[self.df[' isbn'] == isbn]
+        print(book_info)
         details['Name'] = book_info.iloc[0][' title']
         details['ISBN'] = isbn
         details['Author'] = book_info.iloc[0][' author']
