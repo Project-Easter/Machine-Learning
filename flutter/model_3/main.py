@@ -10,8 +10,8 @@ def hello_world():
 @app.route('/recommend_isbn/', methods = ['GET'])
 def recommend_with_isbn():
     isbn = int(request.args.get("isbn",None))
+    re = recommendation() # initialising class object
     try:
-        re = recommendation() # initialising class object
         recommend_list = re.get_recommedations(isbn) # getting list of isbns of recommended books
         return jsonify(recommend_list)
     except KeyError:
