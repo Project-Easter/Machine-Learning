@@ -1,12 +1,14 @@
+from flutter.model_3.db_connect import fetch
 import pandas as pd 
-import pickle as pkl 
+import pickle as pkl
+from pandas.core import frame 
 from scipy.sparse import csr_matrix
-from sklearn.neighbors import NearestNeighbors
 from fuzzywuzzy import fuzz 
 from urllib.request import urlopen
 import json
 import shortuuid
 import random
+from db_connect import *
 
 class recommendation:
     """
@@ -16,7 +18,7 @@ class recommendation:
         """
         Constructor for initialising class with dataframe
         """
-        self.df = pd.read_csv('model_data_updated.csv', encoding='latin-1', error_bad_lines=False)
+        self.df = pd.DataFrame(fetch("SELECT * FROM \"Book\";"))
         self.preprocessing()
         self.loading_model()
 
@@ -30,12 +32,12 @@ class recommendation:
         """
         self.df.dropna(inplace=True)
         # making pivot matrix
-        mat = self.df.pivot(index=' isbn', columns='user_id', values=' no_of_exchanges').fillna(0)
+        mat = self.df.pivot(index='isbn', columns='id', values='rating').fillna(0)
         self.sparse_mat = csr_matrix(mat.values)
         # making a crosstab of isbn and title from df
-        self.book_map = self.df[[' isbn',' title']]
-        self.hash_map = { book : i for i,book in enumerate(list(self.book_map.set_index(' isbn').loc[mat.index][' title']))}
-        self.book_dict = dict(zip(self.book_map[' isbn'], self.book_map[' title']))
+        self.book_map = self.df[['isbn','title']]
+        self.hash_map = { book : i for i,book in enumerate(list(self.book_map.set_index('isbn').loc[mat.index]['title']))}
+        self.book_dict = dict(zip(self.book_map['isbn'], self.book_map['title']))
 
     def loading_model(self):
         """
@@ -212,12 +214,12 @@ class recommendation:
         details : dictionary of the book with its title, author, isbn and genre
         """
         details = {}
-        book_info = self.df[self.df[' isbn'] == isbn]
+        book_info = self.df[self.df['isbn'] == isbn]
         print(book_info)
-        details['Name'] = book_info.iloc[0][' title']
+        details['Name'] = book_info.iloc[0]['title']
         details['ISBN'] = isbn
-        details['Author'] = book_info.iloc[0][' author']
-        details['Genre'] = book_info.iloc[0][' genre']
+        details['Author'] = book_info.iloc[0]['author']
+        details['Genre'] = book_info.iloc[0]['genre']
         return details
     
     def random_books(self, genre):
@@ -233,11 +235,11 @@ class recommendation:
         books : dictionary of 5 random books with their details
         """
         genre = genre + ' '
-        books_genre = self.df[self.df[' genre']==genre].sample(5)
+        books_genre = self.df[self.df['genre']==genre].sample(5)
         print(len(books_genre))
         books = {}
         for i in range(5):
-            books[i+1] = self.book_details(books_genre.iloc[i][' isbn'])
+            books[i+1] = self.book_details(books_genre.iloc[i]['isbn'])
         
         return books
 
