@@ -28,5 +28,3 @@ def update(query):
 
 # x = pd.DataFrame(fetch("SELECT * FROM \"Book\";"))
 # x.to_csv("data.csv")
-x = fetch("SELECT * FROM \"Book\" LIMIT 10;")
-print(x)
