@@ -1,6 +1,5 @@
 import psycopg2
 from config import get_credentials
-# import pandas as pd
 
 database, username, password, hostname, port = get_credentials()
 
@@ -18,13 +17,17 @@ cursor = connection.cursor()
 def fetch(query):
     cursor.execute(query)
     records = cursor.fetchall()
+    columns = [description[0] for description in cursor.description]
     print("Query executed.....")
-    return records
+    return records, columns
 
 def update(query):
     cursor.execute(query)
     connection.commit()
     print("Database updated.....")
 
-# x = pd.DataFrame(fetch("SELECT * FROM \"Book\";"))
-# x.to_csv("data.csv")
+def close_connection(cursor):
+    cursor.close()
+    connection.close()
+
+close_connection(cursor)
