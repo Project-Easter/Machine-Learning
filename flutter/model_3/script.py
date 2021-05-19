@@ -6,7 +6,7 @@ from scipy.sparse import csr_matrix
 from fuzzywuzzy import fuzz 
 from urllib.request import urlopen
 import json
-import shortuuid
+from uuid import uuid1
 import random
 from db_connect import *
 
@@ -18,7 +18,9 @@ class recommendation:
         """
         Constructor for initialising class with dataframe
         """
-        self.df = pd.DataFrame(fetch("SELECT * FROM \"Book\";"))
+        records, columns = fetch("SELECT * FROM \"Book\";")
+        self.df = pd.DataFrame(records, columns=columns)
+        print(self.df.shape)
         self.preprocessing()
         self.loading_model()
 
@@ -30,7 +32,6 @@ class recommendation:
         book_dict - dictionary mapping isbn with book title
         hash_map - dictionary mapping book title with pivot matrix index
         """
-        self.df.dropna(inplace=True)
         # making pivot matrix
         mat = self.df.pivot(index='isbn', columns='id', values='rating').fillna(0)
         self.sparse_mat = csr_matrix(mat.values)
@@ -140,18 +141,14 @@ class recommendation:
         volume_info = obj['items'][0]
         authors = obj['items'][0]['volumeInfo']['authors']
         langs = {
-            'en': 'English',
-            'fr': 'French',
-            'es': 'Spanish',
-            'de': 'German',
-            'ru': 'Russian',
-            'hi': 'Hindi'
+            'en': 'ENGLISH',
+            'fr': 'FRENCH',
+            'es': 'SPANISH',
+            'de': 'GERMAM',
+            'hi': 'HINDI'
         }
 
-        f = open('model_data_updated.csv', 'a')
-
-        user_id = shortuuid.uuid()
-        no_of_exchanges = random.randrange(0,10)
+        user_id = uuid1()
 
         title = volume_info['volumeInfo']['title']
         author = authors[0]
@@ -163,7 +160,7 @@ class recommendation:
         try:
             language = langs[volume_info['volumeInfo']['language']]
         except KeyError:
-            language = ''
+            language = 'OTHERS'
         try:
             ratings = volume_info['volumeInfo']['averageRating']
         except KeyError:
@@ -216,7 +213,7 @@ class recommendation:
         details = {}
         book_info = self.df[self.df['isbn'] == isbn]
         print(book_info)
-        details['Name'] = book_info.iloc[0]['title']
+        details['Title'] = book_info.iloc[0]['title']
         details['ISBN'] = isbn
         details['Author'] = book_info.iloc[0]['author']
         details['Genre'] = book_info.iloc[0]['genre']
@@ -234,7 +231,6 @@ class recommendation:
         ----------
         books : dictionary of 5 random books with their details
         """
-        genre = genre + ' '
         books_genre = self.df[self.df['genre']==genre].sample(5)
         print(len(books_genre))
         books = {}

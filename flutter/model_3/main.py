@@ -9,7 +9,7 @@ def hello_world():
 
 @app.route('/recommend_isbn/', methods = ['GET'])
 def recommend_with_isbn():
-    isbn = int(request.args.get("isbn",None))
+    isbn = request.args.get("isbn",None)
     re = recommendation() # initialising class object
     try:
         recommend_list = re.get_recommedations(isbn) # getting list of isbns of recommended books
@@ -36,9 +36,8 @@ def get_title():
 
 @app.route('/recommend_with_genre/', methods = ['GET'])
 def recommend_with_genre():
-    isbn = int(request.args.get('isbn', None))
+    isbn = request.args.get('isbn', None)
     genre = request.args.get('genre', None)
-    genre = genre + ' '
     try:
         re = gen_recommendation(genre=genre) # initialising class object
         recommend_list = re.get_recommedations(isbn) # getting list of isbns of recommended books
@@ -48,7 +47,7 @@ def recommend_with_genre():
 
 @app.route('/matching_book/', methods = ['GET'])
 def get_book_details():
-    isbn = int(request.args.get('isbn', None))
+    isbn = request.args.get('isbn', None)
     title = request.args.get('title', None)
     re = recommendation()
     try:
