@@ -20,8 +20,8 @@ def update_query(isbn=None):
     decoded_text = text.decode('utf-8')
     obj = json.loads(decoded_text)
 
-    # with open('file.json', 'w') as json_file:
-    #     json.dump(obj, json_file)
+    with open('file.json', 'w') as json_file:
+        json.dump(obj, json_file)
 
     volume_info = obj['items'][0]
     authors = obj['items'][0]['volumeInfo']['authors']
@@ -52,13 +52,13 @@ def update_query(isbn=None):
 
     pages = volume_info['volumeInfo']['pageCount']
     image = volume_info['volumeInfo']['imageLinks']['smallThumbnail']
-    description = volume_info['volumeInfo']['description'].partition('.')
-    description = description[0]
+    description = volume_info['volumeInfo']['description']
+    description = description.replace("\'","")
     addedAt = datetime.datetime.fromtimestamp(time.time()).strftime("%d-%m-%Y %H:%M:S")
     ownerId = '41e5b097-e09d-427b-a770-45aef3eedfd6'
     genre = genre_selector(genres)
 
-    query  = insert_query + user_id + "," + str(isbn) + "," + title + "," + description + "," + author + "," + genre + "," + language + "," + str(pages) + "," + image + "," + str(ratings) + "," + addedAt + ", 44, -184," + ownerId + ");"
+    query  = insert_query + '\'' + user_id + "\',\'" + str(isbn) + "\',\'" + title + "\',E\'" + description + "\',\'" + author + "\',\'" + genre + "\',\'" + language + "\',\'" + str(pages) + "\',\'" + image + "\'," + str(ratings) + ",\'" + addedAt + "\',44,-184,\'" + ownerId + "\');"
 
     return query
 
