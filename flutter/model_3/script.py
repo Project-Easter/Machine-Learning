@@ -1,14 +1,10 @@
-from flutter.model_3.db_connect import fetch
+from flutter.model_3.insert_query import update_query
+from flutter.model_3.db_connect import fetch, update
 import pandas as pd 
 import pickle as pkl
 from pandas.core import frame 
 from scipy.sparse import csr_matrix
 from fuzzywuzzy import fuzz 
-from urllib.request import urlopen
-import json
-from uuid import uuid1
-import random
-from db_connect import *
 
 class recommendation:
     """
@@ -131,47 +127,11 @@ class recommendation:
         -----------
         None, appends the new record to model_2_data_updated.csv
         """
-        self.base_api_link = 'https://www.googleapis.com/books/v1/volumes?q=isbn:'
-        with urlopen(self.base_api_link + str(isbn)) as f:
-            text = f.read()
+        query = update_query(isbn)
+        print(query)
+        update(query)
 
-        decoded_text = text.decode('utf-8')
-        obj = json.loads(decoded_text)
 
-        volume_info = obj['items'][0]
-        authors = obj['items'][0]['volumeInfo']['authors']
-        langs = {
-            'en': 'ENGLISH',
-            'fr': 'FRENCH',
-            'es': 'SPANISH',
-            'de': 'GERMAM',
-            'hi': 'HINDI'
-        }
-
-        user_id = uuid1()
-
-        title = volume_info['volumeInfo']['title']
-        author = authors[0]
-        publisher = volume_info['volumeInfo']['publisher']
-        try:
-            genre = volume_info['volumeInfo']['mainCategory']
-        except KeyError:
-            genre = ''
-        try:
-            language = langs[volume_info['volumeInfo']['language']]
-        except KeyError:
-            language = 'OTHERS'
-        try:
-            ratings = volume_info['volumeInfo']['averageRating']
-        except KeyError:
-            ratings = 0
-
-        try:
-            f.write(user_id + ',' + title.replace(',','|') + ',' + author.replace(',','|') + ',' + publisher.replace(',','|') + ',' + str(isbn) + ',' + language + ',' + str(no_of_exchanges) + ',' + str(ratings) + ',' + genre +  '\n')
-            print('Record Added')
-        except UnicodeDecodeError:
-            pass
-        f.close()
 
     def matching_book(self, book_isbn, book_name):
         """
