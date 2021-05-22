@@ -1,16 +1,29 @@
+"""
+This model creates an insert query for the database to add a new book into it
+"""
 from urllib.request import urlopen
 import json 
 from uuid import uuid1
-import datetime
-import time 
 
-columns = "id, isbn, title, description, author, genre, language, pages, image, rating, addedAt, latitude, longitude, ownerId"
+columns = "\"id\", \"isbn\", \"title\", \"description\", \"author\", \"genre\", \"language\", \"pages\", \"image\", \"rating\", \"latitude\", \"longitude\",\"ownerId\""
 
 insert_query = "INSERT INTO \"Book\"(" + columns + ")\nVALUES("
 
 genres_list = ['ACTION', 'ADVENTURE', 'BIOGRAPHY', 'BUSINESS', 'CHILDRENS', 'COOKING', 'CRIME', 'DRAMA', 'DICTIONARY', 'ENCYCLOPEDIA', 'GUIDE', 'FAIRYTALE','FANTASY', 'HEALTH', 'HISTORICAL', 'HUMOR', 'HORROR', 'JOURNAL', 'MATH', 'OTHERS', 'ROMANCE', 'PHILOSOPHY', 'RELIGION', 'SCIENCE_FICTION', 'SELF_DEVELOPMENT', 'SPORTS' ,'TRAVEL' ,'WESTERN']
 
 def update_query(isbn=None):
+
+    """
+    This function creates the insert query for the isbn of the book which has to be added into the database. The details of the book is taken from Google Books API.
+
+    Parameters
+    -----------
+    isbn : ISBN of the book
+
+    Return
+    -----------
+    query : insert query for the book
+    """
     
     base_api_link = 'https://www.googleapis.com/books/v1/volumes?q=isbn:'
 
@@ -20,8 +33,8 @@ def update_query(isbn=None):
     decoded_text = text.decode('utf-8')
     obj = json.loads(decoded_text)
 
-    with open('file.json', 'w') as json_file:
-        json.dump(obj, json_file)
+    # with open('file.json', 'w') as json_file:
+    #     json.dump(obj, json_file)
 
     volume_info = obj['items'][0]
     authors = obj['items'][0]['volumeInfo']['authors']
@@ -54,16 +67,18 @@ def update_query(isbn=None):
     image = volume_info['volumeInfo']['imageLinks']['smallThumbnail']
     description = volume_info['volumeInfo']['description']
     description = description.replace("\'","")
-    addedAt = datetime.datetime.fromtimestamp(time.time()).strftime("%d-%m-%Y %H:%M:S")
     ownerId = '41e5b097-e09d-427b-a770-45aef3eedfd6'
     genre = genre_selector(genres)
 
-    query  = insert_query + '\'' + user_id + "\',\'" + str(isbn) + "\',\'" + title + "\',E\'" + description + "\',\'" + author + "\',\'" + genre + "\',\'" + language + "\',\'" + str(pages) + "\',\'" + image + "\'," + str(ratings) + ",\'" + addedAt + "\',44,-184,\'" + ownerId + "\');"
+    query  = insert_query + '\'' + user_id + "\',\'" + str(isbn) + "\',\'" + title + "\',E\'" + description + "\',\'" + author + "\',\'" + genre + "\',\'" + language + "\',\'" + str(pages) + "\',\'" + image + "\'," + str(ratings)+ ",44, -184,\'" + ownerId + "\');"
 
     return query
 
 
 def genre_selector(genres=None):
+    """
+    This function finds the database for the book;
+    """
 
     genres = [ x.upper() for x in genres]
     genres = [ x.replace(' ','_') for x in genres]

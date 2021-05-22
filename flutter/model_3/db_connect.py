@@ -1,7 +1,19 @@
+"""
+This module contains methods to connect to the datbase and perform fetch and update operations on it. The database connection
+is established using psycopg2.
+"""
+
 import psycopg2
 from config import get_credentials
 
 def connect():
+
+    """
+    Function to connect to the database.
+
+    Returns:
+    connection variable
+    """
 
     database, username, password, hostname, port = get_credentials()
 
@@ -17,6 +29,9 @@ def connect():
 
 
 def fetch(query):
+    """
+    Function to fetch data from the database.
+    """
     conn = connect()
     cursor = conn.cursor()
     cursor.execute(query)
@@ -28,6 +43,9 @@ def fetch(query):
     return records, columns
 
 def update(query):
+    """
+    Function to insert rows into the database.
+    """
     conn = connect()
     cursor = conn.cursor()
     cursor.execute(query)
