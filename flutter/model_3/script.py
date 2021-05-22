@@ -5,6 +5,7 @@ import pickle as pkl
 from pandas.core import frame 
 from scipy.sparse import csr_matrix
 from fuzzywuzzy import fuzz 
+from distance import fetch_query
 
 class recommendation:
     """
@@ -14,7 +15,10 @@ class recommendation:
         """
         Constructor for initialising class with dataframe
         """
+        # if distance is None:
         records, columns = fetch("SELECT * FROM \"Book\";")
+        #else:
+        #    records, columns = fetch(fetch_query(latitude, longitude, distance))
         self.df = pd.DataFrame(records, columns=columns)
         print(self.df.shape)
         self.preprocessing()
@@ -104,7 +108,7 @@ class recommendation:
         # getting the matches 
         for isbn, title in self.book_dict.items():
             ratio = fuzz.ratio(title.lower(), fav_book.lower())
-            if ratio >= 50:
+            if ratio >= 85:
                 match.append((title, isbn, ratio))
         # sorting the titles in descending order
         match = sorted(match, key = lambda x : x[2])[::-1]
