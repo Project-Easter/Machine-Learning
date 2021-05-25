@@ -1,5 +1,5 @@
-from flutter.model_3.insert_query import update_query
-from flutter.model_3.db_connect import fetch, update
+from insert_query import update_query
+from db_connect import fetch, update
 import pandas as pd 
 import pickle as pkl
 from pandas.core import frame 
