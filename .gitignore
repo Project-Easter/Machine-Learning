@@ -1,4 +1,3 @@
 .vscode/
 __pycache__/
-*.code-workspace
-flutter/model_3/config.py 
+*.code-workspace/
