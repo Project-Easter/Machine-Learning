@@ -7,10 +7,27 @@ app = Flask(__name__)
 def hello_world():
     return 'Hello, World!'
 
+dist = None
+lat = None
+lon = None 
+
+@app.route('/set_distance', methods = ['GET'])
+def set_distance():
+    distance = int(request.args.get("distance",None))
+    latitude = int(request.args.get("latitude",None))
+    longitude = int(request.args.get("longitude",None))
+    global dist 
+    dist = distance
+    global lat 
+    lat = latitude
+    global lon 
+    lon = longitude
+
+re = recommendation(dist, lat, lon)
+
 @app.route('/recommend_isbn/', methods = ['GET'])
 def recommend_with_isbn():
-    isbn = request.args.get("isbn",None)
-    re = recommendation() # initialising class object
+    isbn = request.args.get("isbn",None) # initialising class object
     try:
         recommend_list = re.get_recommedations(isbn) # getting list of isbns of recommended books
         return jsonify(recommend_list)
@@ -20,8 +37,7 @@ def recommend_with_isbn():
 
 @app.route('/book_title/', methods = ['GET'])
 def get_title():
-    title = request.args.get("title", None)
-    re = recommendation() # initialising class object
+    title = request.args.get("title", None) # initialising class object
     matches = re.matching(title) # getting list of matching books
     match_list = {}
     i = int(0)
@@ -49,7 +65,6 @@ def recommend_with_genre():
 def get_book_details():
     isbn = request.args.get('isbn', None)
     title = request.args.get('title', None)
-    re = recommendation()
     try:
         result = re.matching_book(isbn, title)
         return jsonify(result)
@@ -60,7 +75,6 @@ def get_book_details():
 @app.route('/random_books/', methods = ['GET'])
 def get_random_books():
     genre = request.args.get('genre', None)
-    re = recommendation()
     try:
         result = re.random_books(genre=genre)
         return jsonify(result)

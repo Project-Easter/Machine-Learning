@@ -11,14 +11,14 @@ class recommendation:
     """
     Class containing all necessary methods for making recommendations based on title as well as isbn of a certain book
     """
-    def __init__(self):
+    def __init__(self, distance, latitude, longitude):
         """
         Constructor for initialising class with dataframe
         """
-        # if distance is None:
-        records, columns = fetch("SELECT * FROM \"Book\";")
-        #else:
-        #    records, columns = fetch(fetch_query(latitude, longitude, distance))
+        if distance is None and latitude is None and longitude is None:
+            records, columns = fetch("SELECT * FROM \"Book\";")
+        else:
+            records, columns = fetch(fetch_query(latitude, longitude, distance))
         self.df = pd.DataFrame(records, columns=columns)
         print(self.df.shape)
         self.preprocessing()
