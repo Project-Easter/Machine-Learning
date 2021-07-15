@@ -5,7 +5,7 @@ import pickle as pkl
 from pandas.core import frame 
 from scipy.sparse import csr_matrix
 from fuzzywuzzy import fuzz 
-from distance import fetch_query
+from flutter.model_3.distance import fetch_query
 
 class recommendation:
     """
@@ -44,7 +44,7 @@ class recommendation:
         """
         Function initialising model which will be used for recommendations
         """
-        self.model = pkl.load(open('model_file.pkl','rb'))
+        self.model = pkl.load(open('model_3\model_file.pkl','rb'))
         self.model.fit(self.sparse_mat)
     
     def get_title(self,isbn):
