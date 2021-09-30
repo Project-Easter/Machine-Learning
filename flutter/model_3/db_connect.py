@@ -4,7 +4,7 @@ is established using psycopg2.
 """
 
 import psycopg2
-from config import get_credentials
+from flutter.model_3.config import get_credentials
 
 def connect():
 

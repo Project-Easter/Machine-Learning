@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
-from script import recommendation
-from gen_script import gen_recommendation
+from flutter.model_3.script import recommendation
+from flutter.model_3.gen_script import gen_recommendation
 app = Flask(__name__)
 
 @app.route('/')
@@ -10,8 +10,9 @@ def hello_world():
 dist = None
 lat = None
 lon = None 
+re = None 
 
-@app.route('/set_distance', methods = ['GET'])
+@app.route('/set_distance/', methods = ['GET'])
 def set_distance():
     distance = int(request.args.get("distance",None))
     latitude = int(request.args.get("latitude",None))
@@ -22,8 +23,12 @@ def set_distance():
     lat = latitude
     global lon 
     lon = longitude
+    global re 
+    re = recommendation(dist, lat, lon)
+    res = "Distance is set at " + str(distance)
+    return res
 
-re = recommendation(dist, lat, lon)
+
 
 @app.route('/recommend_isbn/', methods = ['GET'])
 def recommend_with_isbn():
